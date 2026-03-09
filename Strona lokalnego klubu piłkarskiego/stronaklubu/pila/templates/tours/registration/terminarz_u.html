@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NRG Team</title>
+    <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
+</head>
+<body>
+
+<header class="navbar">
+    <div class="left-section">
+        <div class="logo">
+            <img src="{% static 'images/logo.jpg' %}" alt="Logo" height="60">
+        </div>
+        <nav class="nav-buttons">
+                <a href="{% url 'protected' %}" class="btn">Strona Główna</a>
+                <a href="{% url 'aktualnosci_u' %}" class="btn">Aktualności</a>
+                <a href="{% url 'bilety_u' %}" class="btn">Bilety</a>
+                <div class="dropdown">
+                    <button class="dropbtn">Sklep</button>
+                    <div class="dropdown-content">
+                        <a href="{% url 'sklep_u' %}">Bilety</a>
+                        <a href="{% url 'merch_u' %}">Merch</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="dropbtn">Statystyki</button>
+                    <div class="dropdown-content">
+                        <a href="{% url 'terminarz_u' %}">Terminarz</a>
+                        <a href="{% url 'tabela_u' %}">Tabela</a>
+                        <a href="{% url 'statystyki_u' %}">Statystyki zawodników</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="right-section">
+            <span class="user-info">Zalogowano jako: {{ request.user.username }}</span>
+            <a href="{% url 'logout' %}" class="btn logout-btn">Wyloguj</a>
+
+        </div>
+</header>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Terminarz meczów</title>
+    <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+        .schedule-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+        }
+        .match {
+            padding: 15px;
+            border-bottom: 1px solid #333;
+        }
+        .match:last-child {
+            border-bottom: none;
+        }
+        .match-date {
+            font-weight: bold;
+            color: #cccccc;
+        }
+        .teams {
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+<div class="schedule-container">
+    <h1>Terminarz meczów</h1>
+
+    {% if matches %}
+        {% for match_obj in matches %}
+        <div class="match">
+            <div class="match-date">{{ match_obj.match_date|date:"d.m.Y H:i" }}</div>
+            <div class="teams">
+                {% if match_obj.location == "Stadion NRG" %}
+                    NRG Team vs {{ match_obj.opponent_name }}
+                {% else %}
+                    {{ match_obj.opponent_name }} vs NRG Team
+                {% endif %}
+                <br><small>({{ match_obj.location }})</small>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="no-matches">Brak zaplanowanych meczów w najbliższym czasie.</p>
+    {% endif %}
+
+</div>
+</body>

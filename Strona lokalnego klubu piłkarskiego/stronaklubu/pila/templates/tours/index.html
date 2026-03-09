@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NRG Team</title>
+    <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="left-section">
+            <div class="logo">
+                <img src="{% static 'images/logo.jpg' %}" alt="Logo" height="60">
+            </div>
+            <nav class="nav-buttons">
+                <a href="{% url 'index' %}" class="btn">Strona Główna</a>
+                <a href="{% url 'aktualnosci' %}" class="btn">Aktualności</a>
+                <a href="{% url 'bilety' %}" class="btn">Bilety</a>
+                
+                <div class="dropdown">
+                    <a class="dropbtn {% if request.resolver_match.url_name == 'sklep' or request.resolver_match.url_name == 'merch' %}active{% endif %}">Sklep</a>
+                    <div class="dropdown-content">
+                        <a href="{% url 'sklep' %}">Bilety</a>
+                        <a href="{% url 'merch' %}">Gadżety</a>
+                    </div>
+                </div>
+
+                <div class="dropdown">
+                    <a class="dropbtn">Statystyki</a>
+                    <div class="dropdown-content">
+                        <a href="{% url 'terminarz' %}">Terminarz</a>
+                        <a href="{% url 'tabela' %}">Tabela</a>
+                        <a href="{% url 'statystyki' %}">Statystyki zawodników</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="right-section">
+            <a href="{% url 'login' %}" class="btn login-btn">Zaloguj</a>
+        </div>
+    </header>
+
+    <main class="content">
+        <div class="text-section">
+            <h1>NRG Team - więcej niż klub</h1>
+            <p>Dołącz do naszej społeczności i śledź najnowsze wydarzenia.</p>
+        </div>
+        <div class="slider">
+            <div class="slides">
+                <img src="{% static 'images/slide1.jpg' %}" alt="Slide 1">
+                <img src="{% static 'images/slide2.jpg' %}" alt="Slide 2">
+                <!-- Dodaj więcej obrazków tutaj -->
+            </div>
+        </div>
+    </main>
+    
+</body>
+</html>

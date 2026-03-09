@@ -1,0 +1,443 @@
+
+{% extends base_template %}
+{% load static %}
+
+{% block title %}{{ post.title }} | NRG Team{% endblock %}
+
+{% block content %}
+
+<div class="post-detail-wrapper">
+    <article class="post-detail-card">
+        <!-- Nagłówek posta -->
+        <header class="post-header">
+            <div class="post-category">Aktualności</div>
+            <h1 class="post-title">{{ post.title }}</h1>
+            <div class="post-meta">
+                <div class="meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <time>{{ post.published_date|date:"d.m.Y H:i" }}</time>
+                </div>
+                {% if post.author %}
+                <div class="meta-item">
+                    <i class="fas fa-user"></i>
+                    <span>{{ post.author.username }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </header>
+        
+        {% if post.image %}
+             <img src="{{ post.image.url }}" alt="Obrazek do posta" style="max-width:100%;">
+        {% endif %}
+        
+        <!-- Treść posta -->
+        <div class="post-content">
+            {{ post.content|linebreaks }}
+        </div>
+        
+        <!-- Tagi (opcjonalne) -->
+        <div class="post-tags">
+            <span class="tag">#sport</span>
+            <span class="tag">#druzyna</span>
+            <span class="tag">#aktualnosci</span>
+        </div>
+        
+        
+        
+        <!-- Sekcja komentarzy -->
+        <section class="comments-section">
+            <h3 class="comments-title">
+                <i class="fas fa-comments"></i>
+                Komentarze ({{ comments.count }})
+            </h3>
+            
+            {% for comment in comments %}
+            <div class="comment-card">
+                <div class="comment-header">
+                    <div class="comment-author-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="comment-author-info">
+                        <strong>{{ comment.author.username }}</strong>
+                        <span class="comment-date">{{ comment.created_date|date:"d.m.Y H:i" }}</span>
+                    </div>
+                </div>
+                <div class="comment-body">
+                    {{ comment.text|linebreaks }}
+                </div>
+            </div>
+            {% empty %}
+            <p class="no-comments">Brak komentarzy. Bądź pierwszy!</p>
+            {% endfor %}
+            
+            <!-- Formularz komentarza -->
+            {% if user.is_authenticated %}
+            <div class="comment-form-card">
+                <h4>Dodaj komentarz</h4>
+                <form method="post" class="comment-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form.text }}
+                    </div>
+                    <button type="submit" class="submit-button">
+                        <i class="fas fa-paper-plane"></i> Wyślij komentarz
+                    </button>
+                </form>
+            </div>
+            {% else %}
+            <div class="login-prompt">
+                <a href="{% url 'login' %}?next={{ request.path }}" class="login-link">
+                    <i class="fas fa-sign-in-alt"></i> Zaloguj się, aby dodać komentarz
+                </a>
+            </div>
+            {% endif %}
+        </section>
+        
+    
+    
+</div>
+
+<!-- Przycisk powrotu -->
+<div class="back-to-list">
+    {% if user.is_authenticated %}
+        <a href="{% url 'aktualnosci_u' %}" class="back-button">
+            <i class="fas fa-arrow-left"></i> Wróć do listy aktualności
+        </a>
+    {% else %}
+        <a href="{% url 'aktualnosci' %}" class="back-button">
+            <i class="fas fa-arrow-left"></i> Wróć do listy aktualności
+        </a>
+    {% endif %}
+</div>
+
+<style>
+    /* Główne style */
+    .post-detail-wrapper {
+        display: flex;
+        max-width: 1200px;
+        margin: 40px auto;
+        gap: 30px;
+    }
+    
+    .post-detail-card {
+        flex: 1;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+    
+    .post-header {
+        padding: 30px 30px 0;
+    }
+    
+    .post-category {
+        display: inline-block;
+        background: #0066cc;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        margin-bottom: 15px;
+    }
+    
+    .post-title {
+        font-size: 2.2rem;
+        margin: 0 0 20px 0;
+        color: #333;
+        line-height: 1.3;
+    }
+
+    .back-to-list + .back-to-list {
+        display: none;
+    }
+    
+    
+    .post-meta {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .post-image {
+        width: 100%;
+        height: 400px;
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+    
+    .post-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .post-content {
+        padding: 0 30px 30px;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #444;
+    }
+    
+    .post-content p {
+        margin-bottom: 1.5em;
+    }
+    
+    .post-tags {
+        display: flex;
+        gap: 10px;
+        padding: 0 30px 20px;
+    }
+    
+    .tag {
+        background: #f0f0f0;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        color: #555;
+    }
+    
+    .social-share {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 0 30px 30px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .social-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: #f0f0f0;
+        color: #555;
+        transition: all 0.3s;
+    }
+    
+    .social-icon:hover {
+        background: #0066cc;
+        color: white;
+    }
+    
+    /* Sekcja komentarzy */
+    .comments-section {
+        padding: 30px;
+    }
+    
+    .comments-title {
+        font-size: 1.5rem;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .comment-card {
+        background: #f9f9f9;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .comment-header {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .comment-author-avatar {
+        font-size: 2rem;
+        color: #666;
+    }
+    
+    .comment-author-info {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .comment-author-info strong {
+        font-size: 1rem;
+    }
+    
+    .comment-date {
+        font-size: 0.8rem;
+        color: #888;
+    }
+    
+    .comment-body {
+        line-height: 1.6;
+        color: #444;
+    }
+    
+    .no-comments {
+        text-align: center;
+        padding: 30px;
+        color: #666;
+        font-style: italic;
+    }
+    
+    /* Formularz komentarza */
+    .comment-form-card {
+        background: #f5f5f5;
+        border-radius: 8px;
+        padding: 25px;
+        margin-top: 30px;
+    }
+    
+    .comment-form-card h4 {
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+    
+    .form-group textarea {
+        width: 100%;
+        min-height: 120px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        resize: vertical;
+        font-family: inherit;
+    }
+    
+    .submit-button {
+        background: #0066cc;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .submit-button:hover {
+        background: #0055aa;
+    }
+    
+    .login-prompt {
+        text-align: center;
+        padding: 20px;
+        background: #f5f5f5;
+        border-radius: 8px;
+    }
+    
+    .login-link {
+        color: #0066cc;
+        text-decoration: none;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    /* Powiązane posty */
+    .related-posts {
+        width: 300px;
+    }
+    
+    .related-posts h3 {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #0066cc;
+    }
+    
+    .related-post {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .related-post h4 {
+        margin: 0 0 5px 0;
+        font-size: 1rem;
+    }
+    
+    .related-post h4 a {
+        color: #333;
+        text-decoration: none;
+    }
+    
+    .related-post h4 a:hover {
+        color: #0066cc;
+    }
+    
+    .related-post time {
+        font-size: 0.8rem;
+        color: #666;
+    }
+    
+    /* Przycisk powrotu */
+    .back-to-list {
+        max-width: 1200px;
+        margin: 0 auto 40px;
+        padding: 0 30px;
+    }
+    
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+    
+    .back-button:hover {
+        color: #004499;
+    }
+    
+    /* Responsywność */
+    @media (max-width: 992px) {
+        .post-detail-wrapper {
+            flex-direction: column;
+        }
+        
+        .related-posts {
+            width: 100%;
+            margin-top: 40px;
+        }
+        
+        .post-image {
+            height: 300px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .post-header,
+        .post-content,
+        .comments-section {
+            padding: 20px;
+        }
+        
+        .post-title {
+            font-size: 1.8rem;
+        }
+        
+        .post-image {
+            height: 250px;
+        }
+    }
+</style>
+
+<!-- Dodaj Font Awesome dla ikon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %}

@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NRG Team{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="left-section">
+            <div class="logo">
+                <img src="{% static 'images/logo.jpg' %}" alt="Logo" height="60">
+            </div>
+            <nav class="nav-buttons">
+                <a href="{% url 'protected' %}" class="btn">Strona Główna</a>
+                <a href="{% url 'aktualnosci_u' %}" class="btn">Aktualności</a>
+                <a href="{% url 'bilety_u' %}" class="btn">Bilety</a>
+                <div class="dropdown">
+                    <button class="dropbtn">Sklep</button>
+                    <div class="dropdown-content">
+                        <a href="{% url 'sklep_u' %}">Bilety</a>
+                        <a href="{% url 'merch_u' %}">Merch</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="dropbtn">Statystyki</button>
+                    <div class="dropdown-content">
+                        <a href="{% url 'terminarz_u' %}">Terminarz</a>
+                        <a href="{% url 'tabela_u' %}">Tabela</a>
+                        <a href="{% url 'statystyki_u' %}">Statystyki zawodników</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="right-section">
+            <span class="user-info">Zalogowano jako: {{ request.user.username }}</span>
+            <a href="{% url 'logout' %}" class="btn logout-btn">Wyloguj</a>
+        </div>
+    </header>
+
+    <!-- Główna zawartość strony (będzie różna dla każdej podstrony) -->
+    <main class="container">
+        {% block content %}
+        <!-- Tutaj trafi zawartość z szablonów dziedziczących -->
+        {% endblock %}
+        
+    </main>
+
+    <!-- Stopka (opcjonalna) -->
+    <footer>
+        <!-- ... -->
+    </footer>
+</body>
+</html>
